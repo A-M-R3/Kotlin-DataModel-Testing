@@ -1,5 +1,7 @@
 package com.universitatcarlemany.task2.model
 
+import java.math.BigDecimal
+
 class MenuItem(
     private var name: String,
     private var price: Double,
@@ -46,8 +48,14 @@ class MenuItem(
     }
 
     private fun validateName(value: String) { require(value.isNotBlank()) }
-    private fun validatePrice(value: Double) { require(value >= 0.0) }
+    private fun validatePrice(value: Double) {
+        require(value >= 0.0)
+        require(BigDecimal.valueOf(value).scale() <= 2)
+    }
     private fun validateDescription(value: String) { require(value.isNotBlank()) }
-    private fun validateImageUrl(value: String) { require(value.isNotBlank()) }
+    private fun validateImageUrl(value: String) {
+        require(value.isNotBlank())
+        require(value.startsWith("http://") || value.startsWith("https://"))
+    }
     private fun validateStock(value: Int) { require(value >= 0) }
 }
