@@ -1,6 +1,7 @@
 package com.universitatcarlemany.task2.model
 
 import java.time.LocalDate
+import java.util.EnumMap
 
 class User(
     private var name: String,
@@ -10,13 +11,12 @@ class User(
     private var phone: String,
     private var email: String
 ) {
-    private val orders: MutableMap<OrderStatus, MutableList<Order>> = mutableMapOf(
-        OrderStatus.IN_PROGRESS to mutableListOf(),
-        OrderStatus.PAYED to mutableListOf(),
-        OrderStatus.DELIVERED to mutableListOf()
-    )
+    private val orders: EnumMap<OrderStatus, MutableSet<Order>> = EnumMap(OrderStatus::class.java)
 
     init {
+        for (status in OrderStatus.values()) {
+            orders[status] = mutableSetOf()
+        }
         validateName(name)
         validateSurname(surname)
         validateAddress(address)
@@ -59,8 +59,8 @@ class User(
         email = newEmail
     }
 
-    fun getOrdersByStatus(status: OrderStatus): List<Order> {
-        return orders[status]?.toList() ?: emptyList()
+    fun getOrdersByStatus(status: OrderStatus): Set<Order> {
+        return orders[status] ?: emptySet()
     }
 
     fun addOrder(order: Order) {
@@ -76,23 +76,9 @@ class User(
         }
     }
 
-    private fun validateName(value: String) {
-        require(value.isNotBlank())
-    }
-
-    private fun validateSurname(value: String) {
-        require(value.isNotBlank())
-    }
-
-    private fun validateAddress(value: String) {
-        require(value.isNotBlank())
-    }
-
-    private fun validatePhone(value: String) {
-        require(value.matches(Regex("^(?:\\+376)?[3468]\\d{5}$")))
-    }
-
-    private fun validateEmail(value: String) {
-        require(value.matches(Regex("^[A-Za-z0-9+_.-]+@(.+)$")))
-    }
+    private fun validateName(value: String) { require(value.isNotBlank()) }
+    private fun validateSurname(value: String) { require(value.isNotBlank()) }
+    private fun validateAddress(value: String) { require(value.isNotBlank()) }
+    private fun validatePhone(value: String) { require(value.matches(Regex("^(?:\\+376)?[34678]\\d{5}$"))) }
+    private fun validateEmail(value: String) { require(value.matches(Regex("^[A-Za-z0-9+_.-]+@(.+)$"))) }
 }
